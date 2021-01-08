@@ -1,0 +1,61 @@
+From 451f0b6376c67501001aac902baf0e07ec703c3c Mon Sep 17 00:00:00 2001
+From: romanenkor <romu4444@gmail.com>
+Date: Thu, 7 Jan 2021 12:22:31 +0300
+Subject: [PATCH 1/2] kernel: tune for interactivity
+
+---
+ kernel/sched/core.c | 2 +-
+ mm/huge_memory.c    | 1 +
+ mm/page-writeback.c | 4 ++--
+ 3 files changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 77aa0e788b9b..5610f748d120 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -64,7 +64,7 @@ const_debug unsigned int sysctl_sched_features =
+  * Number of tasks to iterate in a single balance run.
+  * Limited because this is done with IRQs disabled.
+  */
+-const_debug unsigned int sysctl_sched_nr_migrate = 32;
++const_debug unsigned int sysctl_sched_nr_migrate = 128;
+ 
+ /*
+  * period over which we measure -rt task CPU usage in us.
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 85eda66eb625..2da5f6b7b32b 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -53,6 +53,7 @@ unsigned long transparent_hugepage_flags __read_mostly =
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE_MADVISE
+ 	(1<<TRANSPARENT_HUGEPAGE_REQ_MADV_FLAG)|
+ #endif
++	(1<<TRANSPARENT_HUGEPAGE_DEFRAG_KSWAPD_OR_MADV_FLAG)|
+ 	(1<<TRANSPARENT_HUGEPAGE_DEFRAG_REQ_MADV_FLAG)|
+ 	(1<<TRANSPARENT_HUGEPAGE_DEFRAG_KHUGEPAGED_FLAG)|
+ 	(1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG);
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 586042472ac9..500a0372d6a1 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -71,7 +71,7 @@ static long ratelimit_pages = 32;
+ /*
+  * Start background writeback (via writeback threads) at this percentage
+  */
+-int dirty_background_ratio = 10;
++int dirty_background_ratio = 20;
+ 
+ /*
+  * dirty_background_bytes starts at 0 (disabled) so that it is a function of
+@@ -88,7 +88,7 @@ int vm_highmem_is_dirtyable;
+ /*
+  * The generator of dirty data starts writeback at this percentage
+  */
+-int vm_dirty_ratio = 20;
++int vm_dirty_ratio = 50;
+ 
+ /*
+  * vm_dirty_bytes starts at 0 (disabled) so that it is a function of
+-- 
+2.30.0
+
